@@ -1,0 +1,67 @@
+﻿@model IEnumerable<WebApplication1.Models.Departments>
+
+@{
+    ViewData["Title"] = "DepartList";
+}
+
+<h1>DepartList</h1>
+
+<p class="float-right">
+    <a asp-action="DepartCreate" class="btn btn-primary">Create New</a>
+    <a asp-controller="Student" asp-action="StudentList" class="btn btn-primary">Back To Student</a>
+</p>
+
+<table class="table" id="departmentTable">
+    <thead class="">
+        <tr class="">
+            <th>S NO.</th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Department)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int counter = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr class="text-center">
+                <td>
+                    @(counter++)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Department)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a asp-action="DepartEdit" asp-route-id="@item.ID" class="btn btn-info btn-sm mx-1" title="Edit">Edit</a>
+                        <a asp-action="DepartDetails" asp-route-id="@item.ID" class="btn btn-success btn-sm mx-1" title="Details">Details</a>
+                        <a asp-action="DepartDelete" asp-route-id="@item.ID" class="btn btn-danger btn-sm mx-1" title="Delete">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#departmentTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "lengthMenu": [10, 25, 50, 100],
+                "language": {
+                    "lengthMenu": "Display _MENU_ records per page",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)",
+                }
+            });
+        });
+    </script>
+}

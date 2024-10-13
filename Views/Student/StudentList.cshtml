@@ -1,0 +1,64 @@
+﻿@model IEnumerable<WebApplication1.Models.Students>
+
+@{
+    ViewData["Title"] = "StudentList";
+}
+
+<h1>Student List</h1>
+
+<p class="float-right">
+    <a asp-action="Create" class="btn btn-primary">Add New</a>
+    <a asp-controller="Department" asp-action="DepartList" class="btn btn-primary">Department</a>
+</p>
+
+<table class="table" id="studentTable">
+    <thead>
+        <tr>
+            <th>S No</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Email)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Department)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Mobile)</th>
+            <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Description)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#studentTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "@Url.Action("LoadStudentData", "Student")", // Adjust as necessary
+                    "type": "POST"
+                   
+                },
+                "columns": [
+                    { "data": "sNo", "name": "sNo" },
+                    { "data": "name", "name": "Name" },
+                    { "data": "email", "name": "Email" },
+                    { "data": "department", "name": "Department" },
+                    { "data": "mobile", "name": "Mobile" },
+                    { "data": "description", "name": "Description" },
+                    { "data": "actions", "name": "actions", "orderable": false }
+                ],
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "lengthMenu": [10, 25, 50, 100],
+                "language": {
+                    "lengthMenu": "Display _MENU_ records per page",
+                    "zeroRecords": "Nothing found - sorry",
+                    "info": "Showing page _PAGE_ of _PAGES_",
+                    "infoEmpty": "No records available",
+                    "infoFiltered": "(filtered from _MAX_ total records)"
+                }
+            });
+        });
+    </script>
+}

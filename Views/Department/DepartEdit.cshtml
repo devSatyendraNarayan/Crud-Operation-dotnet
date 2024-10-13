@@ -1,0 +1,71 @@
+﻿@model WebApplication1.Models.Departments
+
+@{
+    ViewData["Title"] = "DepartEdit";
+}
+
+<h1>Edit Department</h1>
+
+<h4>Departments</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="departmentEditForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="Department" class="control-label"></label>
+                <input asp-for="Department" class="form-control" id="Department" />
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="submitEditForm">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="DepartList">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Handle the form submission via AJAX
+            $("#submitEditForm").on("click", function (e) {
+                e.preventDefault();
+
+                var departmentId = $("input[name='ID']").val();
+                var departmentName = $("#Department").val();
+
+                if (departmentName === "") {
+                    Swal.fire('Error', 'Please enter a department name.', 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("DepartEdit", "Department")',
+                    type: 'POST',
+                    data: { ID: departmentId, Department: departmentName },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Success', 'Department updated successfully: ' + response.data.department, 'success').then(() => {
+                                window.location.href = '@Url.Action("DepartList", "Department")';
+                            });
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'An error occurred while updating the department.', 'error');
+                    }
+                });
+            });
+        });
+    </script>
+}

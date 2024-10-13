@@ -1,0 +1,103 @@
+﻿@model WebApplication1.Models.Students
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Students</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="studentCreateForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" id="Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" type="email" id="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Department" class="control-label"></label>
+                <select asp-for="Department" class="form-control" asp-items="@(new SelectList(ViewBag.DepList, "ID", "Department"))" id="DepID">
+                    <option value="">-- Select Department --</option>
+                </select>
+                <span asp-validation-for="DepID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mobile" class="control-label"></label>
+                <input asp-for="Mobile" class="form-control" type="tel" id="Mobile" />
+                <span asp-validation-for="Mobile" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" type="text" id="Description" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="submitCreateForm">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="StudentList">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+
+            // Handle form submission via AJAX
+            $("#submitCreateForm").on("click", function (e) {
+                e.preventDefault();
+
+                // Get form values
+                var name = $("#Name").val().trim();
+                var email = $("#Email").val().trim();
+                var depID = $("#DepID").val();
+                var mobile = $("#Mobile").val().trim();
+                var description = $("#Description").val().trim();
+
+                if (name === "" || email === "" || depID === "" || mobile === "" || description === "") {
+                    Swal.fire('Error', 'Please fill in all fields.', 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Student")', // Action to handle form submission
+                    type: 'POST',
+                    data: {
+                        Name: name,
+                        Email: email,
+                        DepID: depID,
+                        Mobile: mobile,
+                        Description: description
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Success', response.message, 'success').then(() => {
+                                window.location.href = '@Url.Action("StudentList", "Student")'; // Redirect to list
+                            });
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'An error occurred while creating the student.', 'error');
+                    }
+                });
+            });
+        });
+    </script>
+}
